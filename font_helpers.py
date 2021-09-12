@@ -23,7 +23,6 @@ def get_fonts(folder=None):
             parts = line.split(':')
             path = parts[0]
             families = parts[1].strip().split(',')
-            print(parts[2])
             styles = parts[2].split('=')[1].split(',')
             if len(families) == 1 and len(styles) > 1:
                 families = [families[0]] * len(styles)
