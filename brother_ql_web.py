@@ -76,6 +76,7 @@ def get_label_context(request,type="text"):
       'margin_right':  float(d.get('margin_right',  35))/100.,
       'qr':d.get('qr', None),
       'qrsize':int(d.get('qrsize', '100')),
+      'repeat' : int(d.get('repeat', 1)),
     }
     context['margin_top']    = int(context['font_size']*context['margin_top'])
     context['margin_bottom'] = int(context['font_size']*context['margin_bottom'])
@@ -426,7 +427,10 @@ def print_image():
 
 
     qlr = BrotherQLRaster(CONFIG['PRINTER']['MODEL'])
-    create_label(qlr, im, context['label_size'], threshold=context['threshold'], cut=True, rotate=rotate)
+
+    for repeat_remains in range(context['repeat'],0,-1):
+        cut = (repeat_remains == 1)       
+        create_label(qlr, im, context['label_size'], threshold=context['threshold'], cut=cut, rotate=rotate)
 
     if not DEBUG:
         try:
