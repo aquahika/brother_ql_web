@@ -47,13 +47,18 @@ def labeldesigner():
             'website': CONFIG['WEBSITE'],
             'label': CONFIG['LABEL']}
 
-def get_label_context(request):
+def get_label_context(request,type="text"):
     """ might raise LookupError() """
 
     d = request.params.decode() # UTF-8 decoded form data
 
-    font_family = d.get('font_family').rpartition('(')[0].strip()
-    font_style  = d.get('font_family').rpartition('(')[2].rstrip(')')
+    try:
+        font_family = d.get('font_family').rpartition('(')[0].strip()
+        font_style  = d.get('font_family').rpartition('(')[2].rstrip(')')
+    except:
+        font_family = None
+        font_style  = None
+
     context = {
       'text':          d.get('text', None),
       'font_size': int(d.get('font_size', 100)),
@@ -87,7 +92,8 @@ def get_label_context(request):
             raise LookupError("Couln't find the font & style")
         return font_path
 
-    context['font_path'] = get_font_path(context['font_family'], context['font_style'])
+    if context['font_family']:
+        context['font_path'] = get_font_path(context['font_family'], context['font_style'])
 
     def get_label_dimensions(label_size):
         try:
@@ -383,8 +389,8 @@ def print_image():
     logger.warning(request)
 
     try:
-        #context = get_label_context(request)
-        context = {}
+        context = get_label_context(request)
+        # context = {}
         logger.warning(context)
     except LookupError as e:
         return_dict['error'] = e.msg
@@ -410,19 +416,13 @@ def print_image():
 
     im = Image.open(image_name)
 
-    width, height = im.size
 
-    i2 = Image.new('RGB', (696, height), '#ffffff')
-
-    context['width'] = 696
-    context['height'] = height
-
-    context['label_size'] = "62"
     context['threshold'] = 70
     rotate = 0 
     
 
-    print('image height: %d' % height)
+    print('image height: %d' % context['height'])
+    print('label size: %s' % context['label_size'])
 
 
     qlr = BrotherQLRaster(CONFIG['PRINTER']['MODEL'])

@@ -246,6 +246,8 @@ function printImage() {
     formData.append('photos', file, file.name);
   }
 
+  formData.append('label_size', $('#labelSize option:selected').val());
+
   // Set up the request.
   var xhr = new XMLHttpRequest();
 
