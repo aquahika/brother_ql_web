@@ -400,6 +400,7 @@ def print_image():
     import requests
     from PIL import Image, ImageOps
     from io import BytesIO
+    from bottle import response
     import os
 
     # load image from the upload request .. 
@@ -439,10 +440,12 @@ def print_image():
             be.dispose()
             del be
         except Exception as e:
+            response.status = 503
             return_dict['message'] = str(e)
             logger.warning('Exception happened: %s', e)
             return return_dict
 
+    
     return_dict['success'] = True
     if DEBUG: return_dict['data'] = str(qlr.data)
     return return_dict
