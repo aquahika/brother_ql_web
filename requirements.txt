@@ -1,3 +1,4 @@
 git+https://github.com/aquahika/brother_ql.git@master
 bottle
 jinja2
+requests
